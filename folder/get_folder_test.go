@@ -49,3 +49,64 @@ func Test_folder_GetFoldersByOrgID(t *testing.T) {
 		})
 	}
 }
+
+func Test_folder_GetAllChildFolders_Basic1(t *testing.T) {
+	// TODO: Implement a trivial test with 3
+	// OrgIDs present to ensure GetAllChildFolders
+}
+
+func Test_folder_GetAllChildFolders_Basic2(t *testing.T) {
+	// TODO: Implement a trivial test with 5-6
+	// OrgIDs and >8 different folders to ensure GetAllChildFolders
+	// works over a basic but longer example (compared to basic1)
+}
+
+func Test_folder_GetAllChildFolders_Invalid_OrgID(t *testing.T) {
+	// TODO: Test that passing an invalid OrgID results in a 
+	// corresponding error being thrown
+}
+
+func Test_folder_GetAllChildFolders_Invalid_Path(t *testing.T) {
+	// TODO: Test that passing an invalid path results in a 
+	// corresponding error being thrown
+}
+
+func Test_folder_GetAllChildFolders_SamePath_DiffOrg(t *testing.T) {
+	// TODO: Test that passing a path which exists in multiple
+	// organisations doesn't result in results being contaminated
+	// across invalid orgs.
+}
+
+func Test_folder_GetAllChildFolders_QueryEmptyPath(t *testing.T) {
+	// TODO: Test that calling GetAllChildFolders with an empty
+	// folder name returns a corresponding error
+}
+
+func Test_folder_GetAllChildFolders_QueryEmptyOrgID(t *testing.T) {
+	// TODO: Test that calling GetAllChildFolders with an empty
+	// OrgID returns a corresponding error
+}
+
+func Test_folder_GetAllChildFolders_Invalid_ChildPath1(t *testing.T) {
+	// TODO: Test that when a child folder incorrectly contains
+	// a path pointing to an ancestral child (i.e. One that has already been seen), 
+	// the error is handled accordingly. This is to prevent any sort of
+	// infinite recursion from happening.
+}
+
+func Test_folder_GetAllChildFolders_Invalid_ChildPath2(t *testing.T) {
+	// TODO: Test that when a child folder incorrectly contains
+	// a path to a non-existent folder, the error is handled
+	// accordingly.
+}
+
+func Test_folder_GetAllChildFolders_Invalid_ChildPath3(t *testing.T) {
+	// TODO: Test that when a child folder contains an invalid path,
+	// the error is handled accordingly. An example could be the folder
+	// bravo which has the path alpha.charlie (opposed to alpha.bravo)
+}
+
+func Test_folder_GetAllChildFolders_Volume1(t *testing.T) {
+	// TODO: Test that when a large number of folders are in use,
+	// the function still returns the correct results.
+}
