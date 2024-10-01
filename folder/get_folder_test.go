@@ -73,8 +73,7 @@ func Test_folder_GetAllChildFolders_Invalid_Path(t *testing.T) {
 
 func Test_folder_GetAllChildFolders_SamePath_DiffOrg(t *testing.T) {
 	// TODO: Test that passing a path which exists in multiple
-	// organisations doesn't result in results being contaminated
-	// across invalid orgs.
+	// organisations results in a corresponding error being thrown
 }
 
 func Test_folder_GetAllChildFolders_QueryEmptyPath(t *testing.T) {
@@ -106,7 +105,13 @@ func Test_folder_GetAllChildFolders_Invalid_ChildPath3(t *testing.T) {
 	// bravo which has the path alpha.charlie (opposed to alpha.bravo)
 }
 
-func Test_folder_GetAllChildFolders_Volume1(t *testing.T) {
+func Test_folder_GetAllChildFolders_DuplicateFolders(t *testing.T) {
+	// TODO: Test that if a folder is duplicated (i.e. folder name appears
+	// twice in the same OrgId) during obtaining the child folders, 
+	// then a corresponding error is thrown
+}
+
+func Test_folder_GetAllChildFolders_VolumeTest(t *testing.T) {
 	// TODO: Test that when a large number of folders are in use,
 	// the function still returns the correct results.
 }
