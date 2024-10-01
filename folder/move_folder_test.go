@@ -66,8 +66,3 @@ func Test_folder_MoveFolder_DuplicateFolderInTransit(t *testing.T) {
 	// TODO: Test that while trying to move the folder in transit,
 	// if it already appears in the destination folder, an error is thrown
 }
-
-func Test_folder_MoveFolder_VolumeTest(t *testing.T) {
-	// TODO: Test that when a large number of folders are in use,
-	// the function still returns the correct results.
-}

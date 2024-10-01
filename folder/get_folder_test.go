@@ -4,7 +4,7 @@ import (
 	"testing"
 	"github.com/georgechieng-sc/interns-2022/folder"
 	"github.com/gofrs/uuid"
-	// "github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/assert"
 )
 
 // feel free to change how the unit test is structured
@@ -41,6 +41,7 @@ func Test_folder_GetFoldersByOrgID(t *testing.T) {
 			},
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			f := folder.NewDriver(tt.folders)
@@ -50,68 +51,654 @@ func Test_folder_GetFoldersByOrgID(t *testing.T) {
 	}
 }
 
-func Test_folder_GetAllChildFolders_Basic1(t *testing.T) {
-	// TODO: Implement a trivial test with 3
-	// OrgIDs present to ensure GetAllChildFolders
+func TestGetAllChildFoldersBasic(t *testing.T) {
+	/*
+	Trivial test using simple combinations of folders
+	*/
+	type testCase struct {
+		name 	string
+		orgID	uuid.UUID
+		folders	[]folder.Folder
+		want	[]folder.Folder
+	}
+	assert := assert.New(t)
+
+	testCaseWithThreeFolders := testCase{
+		"creative-scalphunter",
+		uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+		[]folder.Folder{
+			folder.Folder{
+				Name: "creative-scalphunter",
+				OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+				Paths: "creative-scalphunter",
+			},
+			folder.Folder{
+				Name: "clear-arclight",
+				OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+				Paths: "creative-scalphunter.clear-arclight",
+			},
+			folder.Folder{
+				Name: "stunning-horridus",
+				OrgId: uuid.FromStringOrNil("c1556e17-b7c0-45a3-a6ae-9546248fb17a"),
+				Paths: "stunning-horridus",
+			},
+		},
+		[]folder.Folder{
+			folder.Folder{
+				Name: "creative-scalphunter",
+				OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+				Paths: "creative-scalphunter",
+			},
+			folder.Folder{
+				Name: "clear-arclight",
+				OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+				Paths: "creative-scalphunter.clear-arclight",
+			},
+		},
+	}
+
+	testCaseWithManyFolders := testCase{
+		"helped-blackheart",
+		uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+		[]folder.Folder{
+			folder.Folder{
+				Name: "creative-scalphunter",
+				OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+				Paths: "creative-scalphunter",
+			},
+			folder.Folder{
+				Name: "clear-arclight",
+				OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+				Paths: "creative-scalphunter.clear-arclight",
+			},
+			folder.Folder{
+				Name: "stunning-horridus",
+				OrgId: uuid.FromStringOrNil("c1556e17-b7c0-45a3-a6ae-9546248fb17a"),
+				Paths: "stunning-horridus",
+			},
+			folder.Folder{
+				Name: "steady-insect",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect",
+			},
+			folder.Folder{
+				Name: "helped-blackheart",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect.helped-blackheart",
+			},
+			folder.Folder{
+				Name: "many-silver-sable",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect.helped-blackheart.many-silver-sable",
+			},
+			folder.Folder{
+				Name: "happy-emoji",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect.helped-blackheart.happy-emoji",
+			},
+			folder.Folder{
+				Name: "fried-chicken",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect.helped-blackheart.fried-chicken",
+			},
+			folder.Folder{
+				Name: "noble-vixen",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect.helped-blackheart.noble-vixen",
+			},
+			folder.Folder{
+				Name: "creative-scalphunter",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect.helped-blackheart.noble-vixen.creative-scalphunter",
+			},
+			folder.Folder{
+				Name: "exciting-magma",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect.helped-blackheart.many-silver-sable.stable-karatecha.exciting-magma",
+			},
+			folder.Folder{
+				Name: "noble-vixen",
+				OrgId: uuid.FromStringOrNil("c1556e17-b7c0-45a3-a6ae-9546248fb17a"),
+				Paths: "noble-vixen",
+			},
+			folder.Folder{
+				Name: "nearby-secret",
+				OrgId: uuid.FromStringOrNil("c1556e17-b7c0-45a3-a6ae-9546248fb17a"),
+				Paths: "noble-vixen.nearby-secret",
+			},
+		},
+		[]folder.Folder{
+			folder.Folder{
+				Name: "helped-blackheart",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect.helped-blackheart",
+			},
+			folder.Folder{
+				Name: "many-silver-sable",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect.helped-blackheart.many-silver-sable",
+			},
+			folder.Folder{
+				Name: "happy-emoji",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect.helped-blackheart.happy-emoji",
+			},
+			folder.Folder{
+				Name: "fried-chicken",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect.helped-blackheart.fried-chicken",
+			},
+			folder.Folder{
+				Name: "noble-vixen",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect.helped-blackheart.noble-vixen",
+			},
+			folder.Folder{
+				Name: "creative-scalphunter",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect.helped-blackheart.noble-vixen.creative-scalphunter",
+			},
+		},
+	}
+
+	tests := [...]testCase{testCaseWithThreeFolders, testCaseWithManyFolders}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			folderDriver := folder.NewDriver(tt.folders)
+			implementationResult := folderDriver.GetAllChildFolders(tt.orgID, tt.name)
+
+			if assert.NotNil(implementationResult) {
+				assert.Equal(tt.want, implementationResult)
+			}
+		})
+	}
 }
 
-func Test_folder_GetAllChildFolders_Basic2(t *testing.T) {
-	// TODO: Implement a trivial test with 5-6
-	// OrgIDs and >8 different folders to ensure GetAllChildFolders
-	// works over a basic but longer example (compared to basic1)
+func TestGetAllChildFoldersWithInvalidOrgId(t *testing.T) {
+	/*
+	Test that passing an invalid OrgID results in an error being thrown
+	*/
+	type testCase struct {
+		name 	string
+		orgID	uuid.UUID
+		folders	[]folder.Folder
+		want	[]folder.Folder
+	}
+	assert := assert.New(t)
+
+	testCaseInvalidOrgId := testCase{
+		"creative-scalphunter",
+		uuid.FromStringOrNil("m8b9879b-f73b-4b0e-b9d9-4fc4c23643a1"),
+		[]folder.Folder{
+			folder.Folder{
+				Name: "creative-scalphunter",
+				OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+				Paths: "creative-scalphunter",
+			},
+			folder.Folder{
+				Name: "clear-arclight",
+				OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+				Paths: "creative-scalphunter.clear-arclight",
+			},
+		},
+		[]folder.Folder{},
+	}
+
+	t.Run(testCaseInvalidOrgId.name, func(t *testing.T) {
+		folderDriver := folder.NewDriver(testCaseInvalidOrgId.folders)
+		implementationResult := folderDriver.GetAllChildFolders(testCaseInvalidOrgId.orgID, testCaseInvalidOrgId.name)
+		assert.Nil(implementationResult)
+	})
 }
 
-func Test_folder_GetAllChildFolders_Invalid_OrgID(t *testing.T) {
-	// TODO: Test that passing an invalid OrgID results in a 
-	// corresponding error being thrown
+func TestGetAllChildFoldersWithInvalidPath(t *testing.T) {
+	/*
+	Test that passing an invalid path results in an error being thrown
+	*/
+	type testCase struct {
+		name 	string
+		orgID	uuid.UUID
+		folders	[]folder.Folder
+		want	[]folder.Folder
+	}
+	assert := assert.New(t)
+
+	testCaseInvalidPath := testCase{
+		"creative-scalphunter.moonlight",
+		uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+		[]folder.Folder{
+			folder.Folder{
+				Name: "creative-scalphunter",
+				OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+				Paths: "creative-scalphunter",
+			},
+			folder.Folder{
+				Name: "clear-arclight",
+				OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+				Paths: "creative-scalphunter.clear-arclight",
+			},
+		},
+		[]folder.Folder{},
+	}
+
+	t.Run(testCaseInvalidPath.name, func(t *testing.T) {
+		folderDriver := folder.NewDriver(testCaseInvalidPath.folders)
+		implementationResult := folderDriver.GetAllChildFolders(testCaseInvalidPath.orgID, testCaseInvalidPath.name)
+		assert.Nil(implementationResult)
+	})
 }
 
-func Test_folder_GetAllChildFolders_Invalid_Path(t *testing.T) {
-	// TODO: Test that passing an invalid path results in a 
-	// corresponding error being thrown
+func TestGetAllChildFoldersWithDuplicatePathsAcrossOrgIds(t *testing.T) {
+	/*
+	Test that passing a duplicate path across OrgIds results in an error
+	*/
+	type testCase struct {
+		name 	string
+		orgID	uuid.UUID
+		folders	[]folder.Folder
+		want	[]folder.Folder
+	}
+	assert := assert.New(t)
+
+	testCaseDuplicatePaths := testCase{
+		"creative-scalphunter",
+		uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+		[]folder.Folder{
+			folder.Folder{
+				Name: "creative-scalphunter",
+				OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+				Paths: "creative-scalphunter",
+			},
+			folder.Folder{
+				Name: "creative-scalphunter",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "creative-scalphunter",
+			},
+			folder.Folder{
+				Name: "random-insect",
+				OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+				Paths: "creative-scalphunter.random-insect",
+			},
+			folder.Folder{
+				Name: "random-insect",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "creative-scalphunter.random-insect",
+			},
+		},
+		[]folder.Folder{},
+	}
+
+	t.Run(testCaseDuplicatePaths.name, func(t *testing.T) {
+		folderDriver := folder.NewDriver(testCaseDuplicatePaths.folders)
+		implementationResult := folderDriver.GetAllChildFolders(testCaseDuplicatePaths.orgID, testCaseDuplicatePaths.name)
+		assert.Nil(implementationResult)
+	})
 }
 
-func Test_folder_GetAllChildFolders_SamePath_DiffOrg(t *testing.T) {
-	// TODO: Test that passing a path which exists in multiple
-	// organisations results in a corresponding error being thrown
+func TestGetAllChildFoldersWithEmptyPath(t *testing.T) {
+	/*
+	Test that calling GetAllChildFolders with an empty
+	folder name returns a corresponding error
+	*/
+	type testCase struct {
+		name 	string
+		orgID	uuid.UUID
+		folders	[]folder.Folder
+		want	[]folder.Folder
+	}
+	assert := assert.New(t)
+
+	testCaseDuplicatePaths := testCase{
+		"",
+		uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+		[]folder.Folder{
+			folder.Folder{
+				Name: "creative-scalphunter",
+				OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+				Paths: "creative-scalphunter",
+			},
+			folder.Folder{
+				Name: "creative-scalphunter",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "creative-scalphunter",
+			},
+			folder.Folder{
+				Name: "random-insect",
+				OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+				Paths: "creative-scalphunter.random-insect",
+			},
+			folder.Folder{
+				Name: "random-insect",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "creative-scalphunter.random-insect",
+			},
+		},
+		[]folder.Folder{},
+	}
+
+	t.Run(testCaseDuplicatePaths.name, func(t *testing.T) {
+		folderDriver := folder.NewDriver(testCaseDuplicatePaths.folders)
+		implementationResult := folderDriver.GetAllChildFolders(testCaseDuplicatePaths.orgID, testCaseDuplicatePaths.name)
+		assert.Nil(implementationResult)
+	})
 }
 
-func Test_folder_GetAllChildFolders_QueryEmptyPath(t *testing.T) {
-	// TODO: Test that calling GetAllChildFolders with an empty
-	// folder name returns a corresponding error
-}
+func TestGetAllChildFoldersWithBrokenPathsInChild(t *testing.T) {
+	/*
+	Test that when a child folder contains an incorrect path, an error is returned
+	*/
+	t.Parallel()
+	type testCase struct {
+		name 	string
+		orgID	uuid.UUID
+		folders	[]folder.Folder
+		want	[]folder.Folder
+	}
+	assert := assert.New(t)
+	
+	testCaseWithSeenPath := testCase{
+		"steady-insect",
+		uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+		[]folder.Folder{
+			folder.Folder{
+				Name: "creative-scalphunter",
+				OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+				Paths: "creative-scalphunter",
+			},
+			folder.Folder{
+				Name: "clear-arclight",
+				OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+				Paths: "creative-scalphunter.clear-arclight",
+			},
+			folder.Folder{
+				Name: "stunning-horridus",
+				OrgId: uuid.FromStringOrNil("c1556e17-b7c0-45a3-a6ae-9546248fb17a"),
+				Paths: "stunning-horridus",
+			},
+			folder.Folder{
+				Name: "steady-insect",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect",
+			},
+			folder.Folder{
+				Name: "helped-blackheart",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect.helped-blackheart",
+			},
+			folder.Folder{
+				Name: "many-silver-sable",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect.helped-blackheart.many-silver-sable",
+			},
+			folder.Folder{
+				Name: "formula-one",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect.helped-blackheart.many-silver-sable",
+			},
+			folder.Folder{
+				Name: "exciting-magma",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect.helped-blackheart.many-silver-sable.stable-karatecha.exciting-magma",
+			},
+			folder.Folder{
+				Name: "noble-vixen",
+				OrgId: uuid.FromStringOrNil("c1556e17-b7c0-45a3-a6ae-9546248fb17a"),
+				Paths: "noble-vixen",
+			},
+			folder.Folder{
+				Name: "nearby-secret",
+				OrgId: uuid.FromStringOrNil("c1556e17-b7c0-45a3-a6ae-9546248fb17a"),
+				Paths: "noble-vixen.nearby-secret",
+			},
+		},
+		[]folder.Folder{},
+	}
 
-func Test_folder_GetAllChildFolders_QueryEmptyOrgID(t *testing.T) {
-	// TODO: Test that calling GetAllChildFolders with an empty
-	// OrgID returns a corresponding error
-}
+	testCaseWithFolderNameNotInPath := testCase{
+		"steady-insect",
+		uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+		[]folder.Folder{
+			folder.Folder{
+				Name: "creative-scalphunter",
+				OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+				Paths: "creative-scalphunter",
+			},
+			folder.Folder{
+				Name: "clear-arclight",
+				OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+				Paths: "creative-scalphunter.clear-arclight",
+			},
+			folder.Folder{
+				Name: "stunning-horridus",
+				OrgId: uuid.FromStringOrNil("c1556e17-b7c0-45a3-a6ae-9546248fb17a"),
+				Paths: "stunning-horridus",
+			},
+			folder.Folder{
+				Name: "steady-insect",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect",
+			},
+			folder.Folder{
+				Name: "helped-blackheart",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect.helped-blackheart",
+			},
+			folder.Folder{
+				Name: "many-silver-sable",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect.helped-blackheart.many-silver-sable",
+			},
+			folder.Folder{
+				Name: "formula-one",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect.helped-blackheart",
+			},
+			folder.Folder{
+				Name: "exciting-magma",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect.helped-blackheart.many-silver-sable.stable-karatecha.exciting-magma",
+			},
+			folder.Folder{
+				Name: "noble-vixen",
+				OrgId: uuid.FromStringOrNil("c1556e17-b7c0-45a3-a6ae-9546248fb17a"),
+				Paths: "noble-vixen",
+			},
+			folder.Folder{
+				Name: "nearby-secret",
+				OrgId: uuid.FromStringOrNil("c1556e17-b7c0-45a3-a6ae-9546248fb17a"),
+				Paths: "noble-vixen.nearby-secret",
+			},
+		},
+		[]folder.Folder{},
+	}
 
-func Test_folder_GetAllChildFolders_Invalid_ChildPath1(t *testing.T) {
-	// TODO: Test that when a child folder incorrectly contains
-	// a path pointing to an ancestral child (i.e. One that has already been seen), 
-	// the error is handled accordingly. This is to prevent any sort of
-	// infinite recursion from happening.
-}
+	testCaseWithNonExistentPaths := testCase{
+		"steady-insect",
+		uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+		[]folder.Folder{
+			folder.Folder{
+				Name: "creative-scalphunter",
+				OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+				Paths: "creative-scalphunter",
+			},
+			folder.Folder{
+				Name: "clear-arclight",
+				OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+				Paths: "creative-scalphunter.clear-arclight",
+			},
+			folder.Folder{
+				Name: "stunning-horridus",
+				OrgId: uuid.FromStringOrNil("c1556e17-b7c0-45a3-a6ae-9546248fb17a"),
+				Paths: "stunning-horridus",
+			},
+			folder.Folder{
+				Name: "steady-insect",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect",
+			},
+			folder.Folder{
+				Name: "helped-blackheart",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect.helped-blackheart",
+			},
+			folder.Folder{
+				Name: "many-silver-sable",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect.helped-blackheart.many-silver-sable",
+			},
+			folder.Folder{
+				Name: "formula-one",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect.helped-blackheart.non-existent-path",
+			},
+			folder.Folder{
+				Name: "exciting-magma",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect.helped-blackheart.many-silver-sable.stable-karatecha.exciting-magma",
+			},
+			folder.Folder{
+				Name: "noble-vixen",
+				OrgId: uuid.FromStringOrNil("c1556e17-b7c0-45a3-a6ae-9546248fb17a"),
+				Paths: "noble-vixen",
+			},
+			folder.Folder{
+				Name: "nearby-secret",
+				OrgId: uuid.FromStringOrNil("c1556e17-b7c0-45a3-a6ae-9546248fb17a"),
+				Paths: "noble-vixen.nearby-secret",
+			},
+		},
+		[]folder.Folder{},
+	}
 
-func Test_folder_GetAllChildFolders_Invalid_ChildPath2(t *testing.T) {
-	// TODO: Test that when a child folder incorrectly contains
-	// a path to a non-existent folder, the error is handled
-	// accordingly.
-}
+	testCaseWithPathInOtherOrgId := testCase{
+		"steady-insect",
+		uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+		[]folder.Folder{
+			folder.Folder{
+				Name: "creative-scalphunter",
+				OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+				Paths: "creative-scalphunter",
+			},
+			folder.Folder{
+				Name: "clear-arclight",
+				OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+				Paths: "creative-scalphunter.clear-arclight",
+			},
+			folder.Folder{
+				Name: "stunning-horridus",
+				OrgId: uuid.FromStringOrNil("c1556e17-b7c0-45a3-a6ae-9546248fb17a"),
+				Paths: "stunning-horridus",
+			},
+			folder.Folder{
+				Name: "steady-insect",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect",
+			},
+			folder.Folder{
+				Name: "helped-blackheart",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect.helped-blackheart",
+			},
+			folder.Folder{
+				Name: "many-silver-sable",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect.helped-blackheart.many-silver-sable",
+			},
+			folder.Folder{
+				Name: "formula-one",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "creative-scalphunter.clear-arclight",
+			},
+			folder.Folder{
+				Name: "exciting-magma",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect.helped-blackheart.many-silver-sable.stable-karatecha.exciting-magma",
+			},
+			folder.Folder{
+				Name: "noble-vixen",
+				OrgId: uuid.FromStringOrNil("c1556e17-b7c0-45a3-a6ae-9546248fb17a"),
+				Paths: "noble-vixen",
+			},
+			folder.Folder{
+				Name: "nearby-secret",
+				OrgId: uuid.FromStringOrNil("c1556e17-b7c0-45a3-a6ae-9546248fb17a"),
+				Paths: "noble-vixen.nearby-secret",
+			},
+		},
+		[]folder.Folder{},
+	}
 
-func Test_folder_GetAllChildFolders_Invalid_ChildPath3(t *testing.T) {
-	// TODO: Test that when a child folder contains an invalid path,
-	// the error is handled accordingly. An example could be the folder
-	// bravo which has the path alpha.charlie (opposed to alpha.bravo)
-}
+	testCaseWithPathJumpingDirectory := testCase{
+		"steady-insect",
+		uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+		[]folder.Folder{
+			folder.Folder{
+				Name: "creative-scalphunter",
+				OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+				Paths: "creative-scalphunter",
+			},
+			folder.Folder{
+				Name: "clear-arclight",
+				OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+				Paths: "creative-scalphunter.clear-arclight",
+			},
+			folder.Folder{
+				Name: "stunning-horridus",
+				OrgId: uuid.FromStringOrNil("c1556e17-b7c0-45a3-a6ae-9546248fb17a"),
+				Paths: "stunning-horridus",
+			},
+			folder.Folder{
+				Name: "steady-insect",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect",
+			},
+			folder.Folder{
+				Name: "helped-blackheart",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect.helped-blackheart",
+			},
+			folder.Folder{
+				Name: "many-silver-sable",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect.helped-blackheart.many-silver-sable",
+			},
+			folder.Folder{
+				Name: "formula-one",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect.helped-blackheart.many-silver-sable.stable-karatecha.formula-one",
+			},
+			folder.Folder{
+				Name: "exciting-magma",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect.helped-blackheart.many-silver-sable.stable-karatecha.exciting-magma",
+			},
+			folder.Folder{
+				Name: "noble-vixen",
+				OrgId: uuid.FromStringOrNil("c1556e17-b7c0-45a3-a6ae-9546248fb17a"),
+				Paths: "noble-vixen",
+			},
+			folder.Folder{
+				Name: "nearby-secret",
+				OrgId: uuid.FromStringOrNil("c1556e17-b7c0-45a3-a6ae-9546248fb17a"),
+				Paths: "noble-vixen.nearby-secret",
+			},
+		},
+		[]folder.Folder{},
+	}
 
-func Test_folder_GetAllChildFolders_DuplicateFolders(t *testing.T) {
-	// TODO: Test that if a folder is duplicated (i.e. folder name appears
-	// twice in the same OrgId) during obtaining the child folders, 
-	// then a corresponding error is thrown
-}
+	tests := [...]testCase{
+		testCaseWithSeenPath,
+		testCaseWithFolderNameNotInPath,
+		testCaseWithNonExistentPaths,
+		testCaseWithPathInOtherOrgId,
+		testCaseWithPathJumpingDirectory,
+	}
 
-func Test_folder_GetAllChildFolders_VolumeTest(t *testing.T) {
-	// TODO: Test that when a large number of folders are in use,
-	// the function still returns the correct results.
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			folderDriver := folder.NewDriver(tt.folders)
+			implementationResult := folderDriver.GetAllChildFolders(tt.orgID, tt.name)
+			assert.Nil(implementationResult)
+		})
+	}
 }
