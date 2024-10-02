@@ -64,42 +64,32 @@ func IsValidFolderName(folderToValidate Folder, parentFolder Folder) bool {
 
 func (f *driver) GetAllChildFolders(orgID uuid.UUID, name string) ([]Folder, error) {
 	/*
-	Approach: First get all the folders for the given OrgID by calling
-	GetFoldersByOrgID. Then create an empty array for unseen folders,
-	seen paths and the child folders. Also create a variable to store
-	the traversal's current parent folder which is initially
-	set to whatever the given name of a folder's Paths value is.
-	Perform a DFS, adding to the child folders array and return
-	when there are no more unseen folders.
+	Performs a DFS-style traversal to obtain all 
+	child folders for a given root-folder name
 	*/
-
-	// TODO: Validation of function parameters
 
 	foldersInOrgID := f.GetFoldersByOrgID(orgID)
 	if len(foldersInOrgID) == 0 {
 		return []Folder{}, errors.New("Invalid or empty OrgID")
 	}
 
-	idxOfFolderDataFromParams := slices.IndexFunc(foldersInOrgID, func(folderData Folder) bool {
+	idxOfRootFolderData := slices.IndexFunc(foldersInOrgID, func(folderData Folder) bool {
 		if folderData.Name == name {
 			return true
 		}
 
 		return false
 	})
-	if idxOfFolderDataFromParams == -1 {
+	if idxOfRootFolderData == -1 {
 		return []Folder{}, errors.New("Invalid path parameter")
 	}
-	folderDataFromParams := foldersInOrgID[idxOfFolderDataFromParams]
+	rootFolderData := foldersInOrgID[idxOfRootFolderData]
 
 	seenFoldersInTraversal := []Folder{}
-	unseenFoldersInTraversal := []Folder{ folderDataFromParams }
+	unseenFoldersInTraversal := []Folder{ rootFolderData }
 	allChildFolders := []Folder{}
 
 	for len(unseenFoldersInTraversal) > 0 {
-		// TODO: Validate folder path ends in folder name and otherwise throw
-		// an error
-
 		currParentFolderInTraversal := unseenFoldersInTraversal[0]
 		unseenFoldersInTraversal = unseenFoldersInTraversal[1:]
 
@@ -113,7 +103,10 @@ func (f *driver) GetAllChildFolders(orgID uuid.UUID, name string) ([]Folder, err
 			}
 		}
 
-		allChildFolders = append(allChildFolders, currParentFolderInTraversal)
+		if currParentFolderInTraversal != rootFolderData {
+			allChildFolders = append(allChildFolders, currParentFolderInTraversal)
+		}
+
 		seenFoldersInTraversal = append(seenFoldersInTraversal, currParentFolderInTraversal)
 
 	}

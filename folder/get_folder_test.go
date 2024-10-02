@@ -85,11 +85,6 @@ func TestGetAllChildFoldersBasic(t *testing.T) {
 		},
 		[]folder.Folder{
 			folder.Folder{
-				Name: "creative-scalphunter",
-				OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
-				Paths: "creative-scalphunter",
-			},
-			folder.Folder{
 				Name: "clear-arclight",
 				OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
 				Paths: "creative-scalphunter.clear-arclight",
@@ -169,11 +164,6 @@ func TestGetAllChildFoldersBasic(t *testing.T) {
 		},
 		[]folder.Folder{
 			folder.Folder{
-				Name: "helped-blackheart",
-				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
-				Paths: "steady-insect.helped-blackheart",
-			},
-			folder.Folder{
 				Name: "many-silver-sable",
 				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
 				Paths: "steady-insect.helped-blackheart.many-silver-sable",
@@ -247,7 +237,7 @@ func TestGetAllChildFoldersWithInvalidOrgId(t *testing.T) {
 	t.Run(testCaseInvalidOrgId.name, func(t *testing.T) {
 		folderDriver := folder.NewDriver(testCaseInvalidOrgId.folders)
 		implementationResult, error := folderDriver.GetAllChildFolders(testCaseInvalidOrgId.orgID, testCaseInvalidOrgId.name)
-		assert.Nil(error)
+		assert.NotNil(error)
 		assert.Equal(testCaseInvalidOrgId.want, implementationResult)
 	})
 }
@@ -329,11 +319,6 @@ func TestGetAllChildFoldersWithDuplicatePathsAcrossOrgIds(t *testing.T) {
 			},
 		},
 		[]folder.Folder{
-			folder.Folder{
-				Name: "creative-scalphunter",
-				OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
-				Paths: "creative-scalphunter",
-			},
 			folder.Folder{
 				Name: "cool-car",
 				OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
