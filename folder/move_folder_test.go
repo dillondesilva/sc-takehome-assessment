@@ -2,6 +2,9 @@ package folder_test
 
 import (
 	"testing"
+	"github.com/georgechieng-sc/interns-2022/folder"
+	"github.com/gofrs/uuid"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestMoveFolderBasic(t *testing.T) {
@@ -18,7 +21,7 @@ func TestMoveFolderBasic(t *testing.T) {
 
 	testCaseWithThreeFolders := testCase{
 		"creative-scalphunter",
-		"stunning-horridus"
+		"stunning-horridus",
 		[]folder.Folder{
 			folder.Folder{
 				Name: "creative-scalphunter",
@@ -58,7 +61,8 @@ func TestMoveFolderBasic(t *testing.T) {
 	/* 
 	Note: This test case has folder "exciting-magma" but its parent "stable-karatecha"
 	is not in structure. This is symbolic of a broken portion of the given folders
-	structure which should not be reached by the system. Also tested later.
+	structure which should not be reached by the system. See
+	TestMoveFolderWithSkippedFoldersInPath for this run in isolation
 	*/
 	testCaseWithManyFolders := testCase{
 		"helped-blackheart",
@@ -201,7 +205,7 @@ func TestMoveFolderBasic(t *testing.T) {
 
 	tests := [...]testCase{testCaseWithThreeFolders, testCaseWithManyFolders}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.sourceFolder, func(t *testing.T) {
 			folderDriver := folder.NewDriver(tt.folders)
 			implementationResult, error := folderDriver.MoveFolder(tt.sourceFolder, tt.destFolder)
 
@@ -224,7 +228,7 @@ func TestMoveFolderWithInvalidFolderArguments(t *testing.T) {
 	}
 	assert := assert.New(t)
 
-	nonExistentSourceFolder := testCase{
+	testCaseNonExistentSourceFolder := testCase{
 		"thisIsNonExistent",
 		"creative-scalphunter",
 		[]folder.Folder{
@@ -244,10 +248,10 @@ func TestMoveFolderWithInvalidFolderArguments(t *testing.T) {
 				Paths: "stunning-horridus",
 			},
 		},
-		[]folder.Folder{}
+		[]folder.Folder{},
 	}
 	
-	nonExistentDestinationFolder := testCase{
+	testCaseNonExistentDestinationFolder := testCase{
 		"creative-scalphunter",
 		"thisIsNonExistent",
 		[]folder.Folder{
@@ -267,16 +271,16 @@ func TestMoveFolderWithInvalidFolderArguments(t *testing.T) {
 				Paths: "stunning-horridus",
 			},
 		},
-		[]folder.Folder{}
+		[]folder.Folder{},
 	}
 
-	tests := [...]testCase{nonExistentSourceFolder, nonExistentDestinationFolder}
+	tests := [...]testCase{testCaseNonExistentSourceFolder, testCaseNonExistentDestinationFolder}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.sourceFolder, func(t *testing.T) {
 			folderDriver := folder.NewDriver(tt.folders)
 			implementationResult, error := folderDriver.MoveFolder(tt.sourceFolder, tt.destFolder)
 			assert.NotNil(error)
-			assert.Equal(testCaseSelfMoveFolder.want, implementationResult)
+			assert.Equal(tt.want, implementationResult)
 		})
 	}
 }
@@ -313,10 +317,10 @@ func TestMoveFolderWithSelfMove(t *testing.T) {
 				Paths: "stunning-horridus",
 			},
 		},
-		[]folder.Folder{}
+		[]folder.Folder{},
 	}
 
-	t.Run(testCaseSelfMoveFolder.name, func(t *testing.T) {
+	t.Run(testCaseSelfMoveFolder.sourceFolder, func(t *testing.T) {
 		folderDriver := folder.NewDriver(testCaseSelfMoveFolder.folders)
 		implementationResult, error := folderDriver.MoveFolder(testCaseSelfMoveFolder.sourceFolder, 
 			testCaseSelfMoveFolder.destFolder)
@@ -358,10 +362,10 @@ func TestMoveFolderOrgDiffersBetweenSourceAndDest(t *testing.T) {
 				Paths: "stunning-horridus",
 			},
 		},
-		[]folder.Folder{}
+		[]folder.Folder{},
 	}
 
-	t.Run(testCaseMoveBetweenOrgIDs.name, func(t *testing.T) {
+	t.Run(testCaseMoveBetweenOrgIDs.sourceFolder, func(t *testing.T) {
 		folderDriver := folder.NewDriver(testCaseMoveBetweenOrgIDs.folders)
 		implementationResult, error := folderDriver.MoveFolder(testCaseMoveBetweenOrgIDs.sourceFolder, 
 			testCaseMoveBetweenOrgIDs.destFolder)
@@ -370,7 +374,7 @@ func TestMoveFolderOrgDiffersBetweenSourceAndDest(t *testing.T) {
 	})
 }
 
-func TestMoveFolderWithSourceAndDestInMultipleOrgIDs() {
+func TestMoveFolderWithSourceAndDestInMultipleOrgIDs(t *testing.T) {
 	/*
 	Test that trying to move a folder which exists in multiple
 	organisations returns an error if they are in different organisations
@@ -418,7 +422,7 @@ func TestMoveFolderWithSourceAndDestInMultipleOrgIDs() {
 				Paths: "stunning-horridus",
 			},
 		},
-		[]folder.Folder{}
+		[]folder.Folder{},
 	}
 
 	testCaseWithSourceInTwoOrgIDsAndDestInOne := testCase{
@@ -451,15 +455,15 @@ func TestMoveFolderWithSourceAndDestInMultipleOrgIDs() {
 				Paths: "creative-scalphunter.clear-arclight",
 			},
 		},
-		[]folder.Folder{}
+		[]folder.Folder{},
 	}
 
-	tests := [...]testCase{testCaseWithAllFolderInTwoOrgIDs, testCaseWithSourceInTwoOrgIDsAndDestInOne}
+	tests := [...]testCase{testCaseWithAllFoldersInTwoOrgIDs, testCaseWithSourceInTwoOrgIDsAndDestInOne}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.sourceFolder, func(t *testing.T) {
 			folderDriver := folder.NewDriver(tt.folders)
-			implementationResult, error := folderDriver.MoveFolder(testCaseWithAllFolderInTwoOrgIDs.sourceFolder,
-				testCaseWithSourceInTwoOrgIDsAndDestInOne.destFolder)
+			implementationResult, error := folderDriver.MoveFolder(tt.sourceFolder,
+				tt.destFolder)
 
 			assert.NotNil(error)
 			assert.Equal(tt.want, implementationResult)
@@ -478,6 +482,7 @@ func TestMoveFolderWithInvalidPathInChildFolder(t *testing.T) {
 		folders		 []folder.Folder
 		want		 []folder.Folder
 	}
+	assert := assert.New(t)
 
 	testCaseWithSeenPath := testCase{
 		"steady-insect",
@@ -660,9 +665,9 @@ func TestMoveFolderWithInvalidPathInChildFolder(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.sourceFolder, func(t *testing.T) {
 			folderDriver := folder.NewDriver(tt.folders)
-			implementationResult, error := folderDriver.GetAllChildFolders(tt.sourceFolder, tt.destFolder)
+			implementationResult, error := folderDriver.MoveFolder(tt.sourceFolder, tt.destFolder)
 			assert.NotNil(error)
 			assert.Equal(tt.want, implementationResult)
 		})
@@ -676,8 +681,8 @@ func TestMoveFolderWithSkippedFoldersInPath(t *testing.T) {
 	between, could be due to corrupt files in a practical scenario).
 	*/
 	type testCase struct {
-		name 	string
-		orgID	uuid.UUID
+		sourceFolder 	string
+		destFolder	string
 		folders	[]folder.Folder
 		want	[]folder.Folder
 	}
@@ -792,7 +797,7 @@ func TestMoveFolderWithSkippedFoldersInPath(t *testing.T) {
 		},
 	}
 
-	t.Run(testCaseWithSkippedFolders.name, func(t *testing.T) {
+	t.Run(testCaseWithSkippedFolders.sourceFolder, func(t *testing.T) {
 		folderDriver := folder.NewDriver(testCaseWithSkippedFolders.folders)
 		implementationResult, error := folderDriver.MoveFolder("steady-insect", "creative-scalphunter")
 		assert.NotNil(error)

@@ -679,7 +679,7 @@ func TestGetAllChildFoldersWithSkippedFoldersInPath(t *testing.T) {
 	t.Run(testCaseWithSkippedFolders.name, func(t *testing.T) {
 		folderDriver := folder.NewDriver(testCaseWithSkippedFolders.folders)
 		implementationResult, error := folderDriver.GetAllChildFolders(testCaseWithSkippedFolders.orgID, testCaseWithSkippedFolders.name)
-		assert.NotNil(error)
+		assert.Nil(error)
 		assert.Equal(testCaseWithSkippedFolders.want, implementationResult)
 	})
 }
