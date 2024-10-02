@@ -2,9 +2,9 @@ package folder
 
 import (
 	"github.com/gofrs/uuid"
-	"fmt"
 	"slices"
 	"strings"
+	"errors"
 )
 
 func GetAllFolders() []Folder {
@@ -51,7 +51,18 @@ func IsPathSeen(seenPaths []Folder, newPath string) bool {
 	return false
 }
 
-func (f *driver) GetAllChildFolders(orgID uuid.UUID, name string) []Folder {
+func IsValidFolderName(folderToValidate Folder, parentFolder Folder) bool {
+	expectedFolderPath := parentFolder.Paths + "." + folderToValidate.Name
+	if expectedFolderPath == folderToValidate.Paths {
+		return true
+	} else if parentFolder == folderToValidate {
+		return true
+	}
+
+	return false
+}
+
+func (f *driver) GetAllChildFolders(orgID uuid.UUID, name string) ([]Folder, error) {
 	/*
 	Approach: First get all the folders for the given OrgID by calling
 	GetFoldersByOrgID. Then create an empty array for unseen folders,
@@ -65,6 +76,10 @@ func (f *driver) GetAllChildFolders(orgID uuid.UUID, name string) []Folder {
 	// TODO: Validation of function parameters
 
 	foldersInOrgID := f.GetFoldersByOrgID(orgID)
+	if len(foldersInOrgID) == 0 {
+		return []Folder{}, errors.New("Invalid or empty OrgID")
+	}
+
 	idxOfFolderDataFromParams := slices.IndexFunc(foldersInOrgID, func(folderData Folder) bool {
 		if folderData.Name == name {
 			return true
@@ -72,7 +87,11 @@ func (f *driver) GetAllChildFolders(orgID uuid.UUID, name string) []Folder {
 
 		return false
 	})
+	if idxOfFolderDataFromParams == -1 {
+		return []Folder{}, errors.New("Invalid path parameter")
+	}
 	folderDataFromParams := foldersInOrgID[idxOfFolderDataFromParams]
+
 	seenFoldersInTraversal := []Folder{}
 	unseenFoldersInTraversal := []Folder{ folderDataFromParams }
 	allChildFolders := []Folder{}
@@ -87,12 +106,17 @@ func (f *driver) GetAllChildFolders(orgID uuid.UUID, name string) []Folder {
 		adjSubfoldersToCurrParent := GetChildFoldersOneLevelDown(foldersInOrgID, currParentFolderInTraversal)
 
 		for _, adjSubfolder := range adjSubfoldersToCurrParent {
-			unseenFoldersInTraversal = append(unseenFoldersInTraversal, adjSubfolder)
+			if IsValidFolderName(adjSubfolder, currParentFolderInTraversal) {
+				unseenFoldersInTraversal = append(unseenFoldersInTraversal, adjSubfolder)
+			} else {
+				return []Folder{}, errors.New("Broken folder structure: Invalid folder name for a child during traversal was found.")
+			}
 		}
 
 		allChildFolders = append(allChildFolders, currParentFolderInTraversal)
 		seenFoldersInTraversal = append(seenFoldersInTraversal, currParentFolderInTraversal)
+
 	}
 
-	return allChildFolders
+	return allChildFolders, nil
 }

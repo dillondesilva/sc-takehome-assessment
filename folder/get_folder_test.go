@@ -205,9 +205,9 @@ func TestGetAllChildFoldersBasic(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			folderDriver := folder.NewDriver(tt.folders)
-			implementationResult := folderDriver.GetAllChildFolders(tt.orgID, tt.name)
+			implementationResult, error := folderDriver.GetAllChildFolders(tt.orgID, tt.name)
 
-			if assert.NotNil(implementationResult) {
+			if assert.Nil(error) {
 				assert.Equal(tt.want, implementationResult)
 			}
 		})
@@ -246,8 +246,9 @@ func TestGetAllChildFoldersWithInvalidOrgId(t *testing.T) {
 
 	t.Run(testCaseInvalidOrgId.name, func(t *testing.T) {
 		folderDriver := folder.NewDriver(testCaseInvalidOrgId.folders)
-		implementationResult := folderDriver.GetAllChildFolders(testCaseInvalidOrgId.orgID, testCaseInvalidOrgId.name)
-		assert.Nil(implementationResult)
+		implementationResult, error := folderDriver.GetAllChildFolders(testCaseInvalidOrgId.orgID, testCaseInvalidOrgId.name)
+		assert.Nil(error)
+		assert.Equal(testCaseInvalidOrgId.want, implementationResult)
 	})
 }
 
@@ -283,14 +284,16 @@ func TestGetAllChildFoldersWithInvalidPath(t *testing.T) {
 
 	t.Run(testCaseInvalidPath.name, func(t *testing.T) {
 		folderDriver := folder.NewDriver(testCaseInvalidPath.folders)
-		implementationResult := folderDriver.GetAllChildFolders(testCaseInvalidPath.orgID, testCaseInvalidPath.name)
-		assert.Nil(implementationResult)
+		implementationResult, error := folderDriver.GetAllChildFolders(testCaseInvalidPath.orgID, testCaseInvalidPath.name)
+		assert.NotNil(error)
+		assert.Equal(testCaseInvalidPath.want, implementationResult)
 	})
 }
 
 func TestGetAllChildFoldersWithDuplicatePathsAcrossOrgIds(t *testing.T) {
 	/*
-	Test that passing a duplicate path across OrgIds results in an error
+	Test that passing a duplicate path across OrgIds results in 
+	the correct folders being returned
 	*/
 	type testCase struct {
 		name 	string
@@ -315,9 +318,9 @@ func TestGetAllChildFoldersWithDuplicatePathsAcrossOrgIds(t *testing.T) {
 				Paths: "creative-scalphunter",
 			},
 			folder.Folder{
-				Name: "random-insect",
+				Name: "cool-car",
 				OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
-				Paths: "creative-scalphunter.random-insect",
+				Paths: "creative-scalphunter.cool-car",
 			},
 			folder.Folder{
 				Name: "random-insect",
@@ -325,13 +328,25 @@ func TestGetAllChildFoldersWithDuplicatePathsAcrossOrgIds(t *testing.T) {
 				Paths: "creative-scalphunter.random-insect",
 			},
 		},
-		[]folder.Folder{},
+		[]folder.Folder{
+			folder.Folder{
+				Name: "creative-scalphunter",
+				OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+				Paths: "creative-scalphunter",
+			},
+			folder.Folder{
+				Name: "cool-car",
+				OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+				Paths: "creative-scalphunter.cool-car",
+			},
+		},
 	}
 
 	t.Run(testCaseDuplicatePaths.name, func(t *testing.T) {
 		folderDriver := folder.NewDriver(testCaseDuplicatePaths.folders)
-		implementationResult := folderDriver.GetAllChildFolders(testCaseDuplicatePaths.orgID, testCaseDuplicatePaths.name)
-		assert.Nil(implementationResult)
+		implementationResult, error := folderDriver.GetAllChildFolders(testCaseDuplicatePaths.orgID, testCaseDuplicatePaths.name)
+		assert.Nil(error)
+		assert.Equal(testCaseDuplicatePaths.want, implementationResult)
 	})
 }
 
@@ -378,8 +393,9 @@ func TestGetAllChildFoldersWithEmptyPath(t *testing.T) {
 
 	t.Run(testCaseDuplicatePaths.name, func(t *testing.T) {
 		folderDriver := folder.NewDriver(testCaseDuplicatePaths.folders)
-		implementationResult := folderDriver.GetAllChildFolders(testCaseDuplicatePaths.orgID, testCaseDuplicatePaths.name)
-		assert.Nil(implementationResult)
+		implementationResult, error := folderDriver.GetAllChildFolders(testCaseDuplicatePaths.orgID, testCaseDuplicatePaths.name)
+		assert.NotNil(error)
+		assert.Equal(testCaseDuplicatePaths.want, implementationResult)
 	})
 }
 
@@ -697,8 +713,9 @@ func TestGetAllChildFoldersWithBrokenPathsInChild(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			folderDriver := folder.NewDriver(tt.folders)
-			implementationResult := folderDriver.GetAllChildFolders(tt.orgID, tt.name)
-			assert.Nil(implementationResult)
+			implementationResult, error := folderDriver.GetAllChildFolders(tt.orgID, tt.name)
+			assert.NotNil(error)
+			assert.Equal(tt.want, implementationResult)
 		})
 	}
 }
