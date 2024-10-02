@@ -25,7 +25,6 @@ func (f *driver) GetFoldersByOrgID(orgID uuid.UUID) []Folder {
 }
 
 func GetChildFoldersOneLevelDown(givenFolders []Folder, rootFolder Folder) []Folder {
-	// Get subfolders
 	rootPath := rootFolder.Paths
 	rootFolderDepth := len(strings.Split(rootPath, "."))
 	childFoldersOneLevelDown := []Folder{}
@@ -40,6 +39,16 @@ func GetChildFoldersOneLevelDown(givenFolders []Folder, rootFolder Folder) []Fol
 	}
 
 	return childFoldersOneLevelDown
+}
+
+func IsPathSeen(seenPaths []Folder, newPath string) bool {
+	for _, seenPath := range seenPaths {
+		if seenPath.Paths == newPath {
+			return true
+		}
+	}
+
+	return false
 }
 
 func (f *driver) GetAllChildFolders(orgID uuid.UUID, name string) []Folder {
@@ -64,27 +73,26 @@ func (f *driver) GetAllChildFolders(orgID uuid.UUID, name string) []Folder {
 		return false
 	})
 	folderDataFromParams := foldersInOrgID[idxOfFolderDataFromParams]
-	fmt.Println(folderDataFromParams)
+	seenFoldersInTraversal := []Folder{}
+	unseenFoldersInTraversal := []Folder{ folderDataFromParams }
+	allChildFolders := []Folder{}
 
-	fmt.Println("Getting child folders one level down from the root")
-	childFoldersOneLevelDown := GetChildFoldersOneLevelDown(foldersInOrgID, folderDataFromParams)
-	fmt.Printf("%v\n", childFoldersOneLevelDown)
+	for len(unseenFoldersInTraversal) > 0 {
+		// TODO: Validate folder path ends in folder name and otherwise throw
+		// an error
 
-	// seenPathsDuringTraversal := []Folder{}
-	// unseenPathsDuringTraversal := []Folder{ folderDataFromParams }
-	// allChildFolders := []Folder{}
-	// currentParentPathDuringTraversal := folderDataFromParams.Paths
+		currParentFolderInTraversal := unseenFoldersInTraversal[0]
+		unseenFoldersInTraversal = unseenFoldersInTraversal[1:]
 
-	// for len(unseenFoldersDuringTraversal) > 0 {
-	// 	// TODO: Validate folder path ends in folder name and otherwise throw
-	// 	// an error
+		adjSubfoldersToCurrParent := GetChildFoldersOneLevelDown(foldersInOrgID, currParentFolderInTraversal)
 
-	// 	// Get neighbouring folders
-	// 	// (i.e. folders with same currentParentPathDuringTraversal but are only 
-	// 	// one level down)
-	// 	// a
+		for _, adjSubfolder := range adjSubfoldersToCurrParent {
+			unseenFoldersInTraversal = append(unseenFoldersInTraversal, adjSubfolder)
+		}
 
-	// 	// Filter OrgIds by whatever the currentParentPathDuringTraversal is
-	// }
-	return []Folder{}
+		allChildFolders = append(allChildFolders, currParentFolderInTraversal)
+		seenFoldersInTraversal = append(seenFoldersInTraversal, currParentFolderInTraversal)
+	}
+
+	return allChildFolders
 }
