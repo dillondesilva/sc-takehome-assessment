@@ -92,6 +92,12 @@ func TestGetAllChildFoldersBasic(t *testing.T) {
 		},
 	}
 
+	/* 
+	Note: This test case has folder "exciting-magma" but its parent "stable-karatecha"
+	is not in structure. This is symbolic of a broken portion of the given folders
+	structure which should not be reached by the system. See
+	TestGetAllChildFoldersWithSkippedFoldersInPath for this run in isolation
+	*/
 	testCaseWithManyFolders := testCase{
 		"helped-blackheart",
 		uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
@@ -399,7 +405,7 @@ func TestGetAllChildFoldersWithBrokenPathsInChild(t *testing.T) {
 	
 	testCaseWithSeenPath := testCase{
 		"steady-insect",
-		uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+		uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
 		[]folder.Folder{
 			folder.Folder{
 				Name: "creative-scalphunter",
@@ -457,7 +463,7 @@ func TestGetAllChildFoldersWithBrokenPathsInChild(t *testing.T) {
 
 	testCaseWithFolderNameNotInPath := testCase{
 		"steady-insect",
-		uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+		uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
 		[]folder.Folder{
 			folder.Folder{
 				Name: "creative-scalphunter",
@@ -515,7 +521,7 @@ func TestGetAllChildFoldersWithBrokenPathsInChild(t *testing.T) {
 
 	testCaseWithNonExistentPaths := testCase{
 		"steady-insect",
-		uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+		uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
 		[]folder.Folder{
 			folder.Folder{
 				Name: "creative-scalphunter",
@@ -571,67 +577,39 @@ func TestGetAllChildFoldersWithBrokenPathsInChild(t *testing.T) {
 		[]folder.Folder{},
 	}
 
-	testCaseWithPathInOtherOrgId := testCase{
-		"steady-insect",
-		uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
-		[]folder.Folder{
-			folder.Folder{
-				Name: "creative-scalphunter",
-				OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
-				Paths: "creative-scalphunter",
-			},
-			folder.Folder{
-				Name: "clear-arclight",
-				OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
-				Paths: "creative-scalphunter.clear-arclight",
-			},
-			folder.Folder{
-				Name: "stunning-horridus",
-				OrgId: uuid.FromStringOrNil("c1556e17-b7c0-45a3-a6ae-9546248fb17a"),
-				Paths: "stunning-horridus",
-			},
-			folder.Folder{
-				Name: "steady-insect",
-				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
-				Paths: "steady-insect",
-			},
-			folder.Folder{
-				Name: "helped-blackheart",
-				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
-				Paths: "steady-insect.helped-blackheart",
-			},
-			folder.Folder{
-				Name: "many-silver-sable",
-				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
-				Paths: "steady-insect.helped-blackheart.many-silver-sable",
-			},
-			folder.Folder{
-				Name: "formula-one",
-				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
-				Paths: "creative-scalphunter.clear-arclight",
-			},
-			folder.Folder{
-				Name: "exciting-magma",
-				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
-				Paths: "steady-insect.helped-blackheart.many-silver-sable.stable-karatecha.exciting-magma",
-			},
-			folder.Folder{
-				Name: "noble-vixen",
-				OrgId: uuid.FromStringOrNil("c1556e17-b7c0-45a3-a6ae-9546248fb17a"),
-				Paths: "noble-vixen",
-			},
-			folder.Folder{
-				Name: "nearby-secret",
-				OrgId: uuid.FromStringOrNil("c1556e17-b7c0-45a3-a6ae-9546248fb17a"),
-				Paths: "noble-vixen.nearby-secret",
-			},
-		},
-		[]folder.Folder{},
+	tests := [...]testCase{
+		testCaseWithSeenPath,
+		testCaseWithFolderNameNotInPath,
+		testCaseWithNonExistentPaths,
 	}
 
-	testCaseWithPathJumpingDirectory := testCase{
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			folderDriver := folder.NewDriver(tt.folders)
+			implementationResult, error := folderDriver.GetAllChildFolders(tt.orgID, tt.name)
+			assert.NotNil(error)
+			assert.Equal(tt.want, implementationResult)
+		})
+	}
+}
+
+func TestGetAllChildFoldersWithSkippedFoldersInPath(t *testing.T) {
+	/*
+	Test that all child folders are returned, without including any
+	that skip over non-existent folders (i.e. a folder is missing in
+	between, could be due to corrupt files in a practical scenario).
+	*/
+	type testCase struct {
+		name 	string
+		orgID	uuid.UUID
+		folders	[]folder.Folder
+		want	[]folder.Folder
+	}
+	assert := assert.New(t)
+
+	testCaseWithSkippedFolders := testCase{
 		"steady-insect",
-		uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
+		uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
 		[]folder.Folder{
 			folder.Folder{
 				Name: "creative-scalphunter",
@@ -684,23 +662,24 @@ func TestGetAllChildFoldersWithBrokenPathsInChild(t *testing.T) {
 				Paths: "noble-vixen.nearby-secret",
 			},
 		},
-		[]folder.Folder{},
+		[]folder.Folder{
+			folder.Folder{
+				Name: "helped-blackheart",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect.helped-blackheart",
+			},
+			folder.Folder{
+				Name: "many-silver-sable",
+				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
+				Paths: "steady-insect.helped-blackheart.many-silver-sable",
+			},
+		},
 	}
 
-	tests := [...]testCase{
-		testCaseWithSeenPath,
-		testCaseWithFolderNameNotInPath,
-		testCaseWithNonExistentPaths,
-		testCaseWithPathInOtherOrgId,
-		testCaseWithPathJumpingDirectory,
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			folderDriver := folder.NewDriver(tt.folders)
-			implementationResult, error := folderDriver.GetAllChildFolders(tt.orgID, tt.name)
-			assert.NotNil(error)
-			assert.Equal(tt.want, implementationResult)
-		})
-	}
+	t.Run(testCaseWithSkippedFolders.name, func(t *testing.T) {
+		folderDriver := folder.NewDriver(testCaseWithSkippedFolders.folders)
+		implementationResult, error := folderDriver.GetAllChildFolders(testCaseWithSkippedFolders.orgID, testCaseWithSkippedFolders.name)
+		assert.NotNil(error)
+		assert.Equal(testCaseWithSkippedFolders.want, implementationResult)
+	})
 }
