@@ -158,32 +158,32 @@ func TestMoveFolderBasic(t *testing.T) {
 			folder.Folder{
 				Name: "helped-blackheart",
 				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
-				Paths: "creative-scalphunter.steady-insect.helped-blackheart",
+				Paths: "creative-scalphunter.helped-blackheart",
 			},
 			folder.Folder{
 				Name: "many-silver-sable",
 				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
-				Paths: "creative-scalphunter.steady-insect.helped-blackheart.many-silver-sable",
+				Paths: "creative-scalphunter.helped-blackheart.many-silver-sable",
 			},
 			folder.Folder{
 				Name: "happy-emoji",
 				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
-				Paths: "creative-scalphunter.steady-insect.helped-blackheart.happy-emoji",
+				Paths: "creative-scalphunter.helped-blackheart.happy-emoji",
 			},
 			folder.Folder{
 				Name: "fried-chicken",
 				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
-				Paths: "creative-scalphunter.steady-insect.helped-blackheart.fried-chicken",
+				Paths: "creative-scalphunter.helped-blackheart.fried-chicken",
 			},
 			folder.Folder{
 				Name: "noble-vixen",
 				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
-				Paths: "creative-scalphunter.steady-insect.helped-blackheart.noble-vixen",
+				Paths: "creative-scalphunter.helped-blackheart.noble-vixen",
 			},
 			folder.Folder{
 				Name: "iphone-11",
 				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
-				Paths: "creative-scalphunter.steady-insect.helped-blackheart.noble-vixen.iphone-11",
+				Paths: "creative-scalphunter.helped-blackheart.noble-vixen.iphone-11",
 			},
 			folder.Folder{
 				Name: "exciting-magma",
