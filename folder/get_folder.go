@@ -120,7 +120,7 @@ func (f *driver) GetAllChildFolders(orgID uuid.UUID, name string) ([]Folder, err
 	for len(unseenFoldersInTraversal) > 0 {
 		currParentFolderInTraversal := unseenFoldersInTraversal[0]
 		unseenFoldersInTraversal = unseenFoldersInTraversal[1:]
-		adjSubfoldersToCurrParent := GetChildFoldersOneLevelDown(foldersInOrgID, 
+		adjSubfoldersToCurrParent := GetAdjacentSubfolders(foldersInOrgID, 
 			currParentFolderInTraversal)
 		
 		// Iterate through all adjacent subfolders, pushing them to queue
