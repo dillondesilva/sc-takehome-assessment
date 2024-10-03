@@ -2,6 +2,7 @@ package folder
 
 import (
 	"slices"
+	"strings"
 	"errors"
 )
 
@@ -94,15 +95,26 @@ func (f *driver) MoveFolder(sourceFolder string, destFolder string) ([]Folder, e
 		return updatedFolders, errors.New("Invalid child folder inside of source detected")
 	}
 
-	// Start moving the source folder inside destination folder
-	sourceAndChildFolders = append(sourceAndChildFolders, sourceFolderData)
+	// Move the source folder inside destination folder,
+	// ensuring we keep the correct path (i.e. chop off the old
+	// prefixes)
+	oldPathToSource := sourceFolderData.Paths // This is for trimming paths later on
+	sourceFolderData.Paths = destFolderData.Paths + "." + sourceFolderData.Name
+	updatedFolders = append(updatedFolders, sourceFolderData)
+
+	// Do the same for the child folders]
 	for _, folderToMove := range sourceAndChildFolders {
-		folderToMove.Paths = destFolderData.Paths + "." + folderToMove.Paths
+		newSubpathUnderDestFolder := sourceFolderData.Name + strings.TrimPrefix(
+			folderToMove.Paths, oldPathToSource)
+		folderToMove.Paths = destFolderData.Paths + "." + newSubpathUnderDestFolder
 		updatedFolders = append(updatedFolders, folderToMove)
 	}
 
 	// Add other folders, ensuring they aren't already in the slice
 	// from our earlier operation when moving folders.
+
+	// We also add the sourceFolderData so it isn't de-duplicated
+	sourceAndChildFolders = append(sourceAndChildFolders, sourceFolderData)
 	for _, folderToMove := range f.folders {
 		if IsFolderInCollection(sourceAndChildFolders, folderToMove) == false {
 			updatedFolders = append(updatedFolders, folderToMove)

@@ -52,6 +52,19 @@ func main() {
 	// folderDriver := folder.NewDriver(res)
 	folderDriver := folder.NewDriver(testFolders)
 	// orgFolder := folderDriver.GetFoldersByOrgID(orgID)
+
+	// ADJUST THIS TO EXPERIMENT
+	childFolders, errChild := folderDriver.GetAllChildFolders(uuid.FromStringOrNil("c1556e17-b7c0-45a3-a6ae-9546248fb17a"), "invalid_folder")
+	if (errChild == nil) {
+		fmt.Println("POST GET ALL CHILD FOLDERS")
+		for _, folder := range childFolders {
+			fmt.Println(folder)
+		}
+	} else {
+		fmt.Println(errChild)
+	}
+
+	// ADJUST THIS TO EXPERIMENT
 	movedFolders, err := folderDriver.MoveFolder("bravo", "golf")
 	if (err == nil) {
 		fmt.Println("POST MOVE FOLDER STRUCTURE")
