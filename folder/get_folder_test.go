@@ -7,8 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// feel free to change how the unit test is structured
-func Test_folder_GetFoldersByOrgID(t *testing.T) {
+func TestGetFoldersByOrgID(t *testing.T) {
 	t.Parallel()
 	tests := [...]struct {
 		name    string
@@ -16,7 +15,6 @@ func Test_folder_GetFoldersByOrgID(t *testing.T) {
 		folders []folder.Folder
 		want    []folder.Folder
 	}{
-		// TODO: your tests here
 		{
 			"bravo",
 			uuid.FromStringOrNil("c1556e17-b7c0-45a3-a6ae-9546248fb17a"),
