@@ -62,6 +62,24 @@ func IsValidFolderName(folderToValidate Folder, parentFolder Folder) bool {
 	return false
 }
 
+// func (f* driver) GetFolderByName(folderName string) (Folder, error) {
+// 	/*
+// 	Obtain folder data under a given name
+// 	*/
+// 	idxOfFolderData := slices.IndexFunc(f.folders, func(folderData Folder) bool {
+// 		if folderData.Name == name {
+// 			return true
+// 		}
+
+// 		return false
+// 	})
+// 	if idxOfFolderData == -1 {
+// 		return Folder{}, errors.New("Invalid folder name")
+// 	}
+// 	folderData := foldersInOrgID[idxOfFolderData]
+// 	return folderData, nil
+// }
+
 func (f *driver) GetAllChildFolders(orgID uuid.UUID, name string) ([]Folder, error) {
 	/*
 	Performs a DFS-style traversal to obtain all 

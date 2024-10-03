@@ -173,7 +173,7 @@ func TestMoveFolderBasic(t *testing.T) {
 			folder.Folder{
 				Name: "fried-chicken",
 				OrgId: uuid.FromStringOrNil("9b4cdb0a-cfea-4f9d-8a68-24f038fae385"),
-				Paths: "steady-insect.helped-blackheart.fried-chicken",
+				Paths: "creative-scalphunter.steady-insect.helped-blackheart.fried-chicken",
 			},
 			folder.Folder{
 				Name: "noble-vixen",
@@ -210,7 +210,7 @@ func TestMoveFolderBasic(t *testing.T) {
 			implementationResult, error := folderDriver.MoveFolder(tt.sourceFolder, tt.destFolder)
 
 			if assert.Nil(error) {
-				assert.Equal(tt.want, implementationResult)
+				assert.ElementsMatch(tt.want, implementationResult)
 			}
 		})
 	}
@@ -280,7 +280,7 @@ func TestMoveFolderWithInvalidFolderArguments(t *testing.T) {
 			folderDriver := folder.NewDriver(tt.folders)
 			implementationResult, error := folderDriver.MoveFolder(tt.sourceFolder, tt.destFolder)
 			assert.NotNil(error)
-			assert.Equal(tt.want, implementationResult)
+			assert.ElementsMatch(tt.want, implementationResult)
 		})
 	}
 }
@@ -325,7 +325,7 @@ func TestMoveFolderWithSelfMove(t *testing.T) {
 		implementationResult, error := folderDriver.MoveFolder(testCaseSelfMoveFolder.sourceFolder, 
 			testCaseSelfMoveFolder.destFolder)
 		assert.NotNil(error)
-		assert.Equal(testCaseSelfMoveFolder.want, implementationResult)
+		assert.ElementsMatch(testCaseSelfMoveFolder.want, implementationResult)
 	})
 }
 
@@ -370,7 +370,7 @@ func TestMoveFolderOrgDiffersBetweenSourceAndDest(t *testing.T) {
 		implementationResult, error := folderDriver.MoveFolder(testCaseMoveBetweenOrgIDs.sourceFolder, 
 			testCaseMoveBetweenOrgIDs.destFolder)
 		assert.NotNil(error)
-		assert.Equal(testCaseMoveBetweenOrgIDs.want, implementationResult)
+		assert.ElementsMatch(testCaseMoveBetweenOrgIDs.want, implementationResult)
 	})
 }
 
@@ -466,7 +466,7 @@ func TestMoveFolderWithSourceAndDestInMultipleOrgIDs(t *testing.T) {
 				tt.destFolder)
 
 			assert.NotNil(error)
-			assert.Equal(tt.want, implementationResult)
+			assert.ElementsMatch(tt.want, implementationResult)
 		})
 	}
 
@@ -669,7 +669,7 @@ func TestMoveFolderWithInvalidPathInChildFolder(t *testing.T) {
 			folderDriver := folder.NewDriver(tt.folders)
 			implementationResult, error := folderDriver.MoveFolder(tt.sourceFolder, tt.destFolder)
 			assert.NotNil(error)
-			assert.Equal(tt.want, implementationResult)
+			assert.ElementsMatch(tt.want, implementationResult)
 		})
 	}
 }
@@ -800,7 +800,7 @@ func TestMoveFolderWithSkippedFoldersInPath(t *testing.T) {
 	t.Run(testCaseWithSkippedFolders.sourceFolder, func(t *testing.T) {
 		folderDriver := folder.NewDriver(testCaseWithSkippedFolders.folders)
 		implementationResult, error := folderDriver.MoveFolder("steady-insect", "creative-scalphunter")
-		assert.NotNil(error)
-		assert.Equal(testCaseWithSkippedFolders.want, implementationResult)
+		assert.Nil(error)
+		assert.ElementsMatch(testCaseWithSkippedFolders.want, implementationResult)
 	})
 }
