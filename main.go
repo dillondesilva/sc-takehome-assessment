@@ -12,19 +12,39 @@ func main() {
 	// res := folder.GetAllFolders()
 	testFolders := []folder.Folder{
 		folder.Folder{
-			Name: "creative-scalphunter",
-			OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
-			Paths: "creative-scalphunter",
+			Name: "alpha",
+			Paths: "alpha",
+			OrgId: uuid.FromStringOrNil("c1556e17-b7c0-45a3-a6ae-9546248fb17a"),
 		},
 		folder.Folder{
-			Name: "clear-arclight",
-			OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
-			Paths: "creative-scalphunter.clear-arclight",
+			Name: "bravo",
+			Paths: "alpha.bravo",
+			OrgId: uuid.FromStringOrNil("c1556e17-b7c0-45a3-a6ae-9546248fb17a"),
 		},
 		folder.Folder{
-			Name: "stunning-horridus",
-			OrgId: uuid.FromStringOrNil("38b9879b-f73b-4b0e-b9d9-4fc4c23643a7"),
-			Paths: "stunning-horridus",
+			Name: "charlie",
+			Paths: "alpha.bravo.charlie",
+			OrgId: uuid.FromStringOrNil("c1556e17-b7c0-45a3-a6ae-9546248fb17a"),
+		},
+		folder.Folder{
+			Name: "delta",
+			Paths: "alpha.delta",
+			OrgId: uuid.FromStringOrNil("c1556e17-b7c0-45a3-a6ae-9546248fb17a"),
+		},
+		folder.Folder{
+			Name: "echo",
+			Paths: "alpha.delta.echo",
+			OrgId: uuid.FromStringOrNil("c1556e17-b7c0-45a3-a6ae-9546248fb17a"),
+		},
+		folder.Folder{
+			Name: "foxtrot",
+			Paths: "foxtrot",
+			OrgId: uuid.FromStringOrNil("q1556e17-b7c0-45a3-a6ae-9546248fb17d"),
+		},
+		folder.Folder{
+			Name: "golf",
+			Paths: "golf",
+			OrgId: uuid.FromStringOrNil("c1556e17-b7c0-45a3-a6ae-9546248fb17a"),
 		},
 	}
 
@@ -32,9 +52,12 @@ func main() {
 	// folderDriver := folder.NewDriver(res)
 	folderDriver := folder.NewDriver(testFolders)
 	// orgFolder := folderDriver.GetFoldersByOrgID(orgID)
-	movedFolders, err := folderDriver.MoveFolder("creative-scalphunter", "stunning-horridus")
+	movedFolders, err := folderDriver.MoveFolder("bravo", "golf")
 	if (err == nil) {
-		fmt.Println("MoveFolder returned", movedFolders)
+		fmt.Println("POST MOVE FOLDER STRUCTURE")
+		for _, folder := range movedFolders {
+			fmt.Println(folder)
+		}
 	} else {
 		fmt.Println(err)
 	}
